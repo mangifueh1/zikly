@@ -29,10 +29,16 @@ Do **not** set the start command to `npm start`.
 
 In Supabase → Authentication → URL configuration:
 
-- **Site URL:** `https://YOUR-APP.vercel.app`
-- **Redirect URLs:** `https://YOUR-APP.vercel.app/auth.html` and `http://localhost:3000/auth.html`
+- **Site URL:** `https://zikly.vercel.app`
+- **Redirect URLs:** `https://zikly.vercel.app/auth.html` and `http://localhost:3000/auth.html`
 
 Password reset uses `/auth.html`. Fapshi return uses `/vault.html`. The Fapshi webhook stays on Supabase (`/functions/v1/fapshi-webhook`), not Vercel.
+
+If Vercel displays an authentication wall to visitors, disable Vercel Authentication under Project → Deployment Protection, or run:
+
+```bash
+npx vercel project protection disable --sso --yes
+```
 
 ## Local
 
