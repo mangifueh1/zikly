@@ -1,0 +1,7 @@
+.env
+.env.local
+.git
+.copilot
+supabase/.temp
+supabase/.branches
+*.log

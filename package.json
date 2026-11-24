@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "node server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "postinstall": "node scripts/copy-lucide.js",
+    "build": "node scripts/build-static.js"
   },
   "dependencies": {
     "lucide-static": "^1.78.0"
