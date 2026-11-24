@@ -45,6 +45,14 @@ async function init() {
     const vault = DEMO_MODE ? { items: [], subscriptions: [] } : await getFanVault();
     const now = Date.now();
     const rows = vault.subscriptions || [];
+
+    // Sync any remote subscriptions to localStorage
+    rows.forEach((sub) => {
+      if (sub.artist_id && sub.expires_at) {
+        localStorage.setItem(`zikly_sub_${sub.artist_id}`, sub.expires_at);
+      }
+    });
+
     if (rows.length) {
       subscriptions.classList.remove("hidden");
       subscriptions.innerHTML = `<h2>Your subscriptions</h2><div class="subscription-list">${rows.map((item) => {

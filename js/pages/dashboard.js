@@ -14,8 +14,26 @@ let artist;
 let profile;
 let projects = [];
 
+function formatErrorMessage(error) {
+  const msg = (error?.message || "").toLowerCase();
+  const details = (error?.details || "").toLowerCase();
+  if (
+    msg.includes("foreign key") ||
+    details.includes("foreign key") ||
+    msg.includes("active purchases") ||
+    msg.includes("violates foreign key constraint") ||
+    msg.includes("unlocks_project_id_fkey") ||
+    msg.includes("unlocks_track_id_fkey") ||
+    msg.includes("payments_project_id_fkey") ||
+    msg.includes("payments_track_id_fkey")
+  ) {
+    return "This project or media cannot be deleted because fans have already purchased or unlocked it. Active purchases are protected so fans retain access.";
+  }
+  return error?.message || "Something went wrong.";
+}
+
 function showError(error) {
-  toast(error.message || "Something went wrong.", "error");
+  toast(formatErrorMessage(error), "error");
 }
 
 function setLoading(message) {

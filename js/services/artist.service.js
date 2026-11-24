@@ -58,3 +58,54 @@ export async function getOwnedArtist(userId) {
   if (error) throw error;
   return data;
 }
+
+export async function getFanSubscriptionForArtist(artistId) {
+  if (!artistId) return null;
+  const localKey = `zikly_sub_${artistId}`;
+  const localExpiry = localStorage.getItem(localKey);
+  const now = new Date();
+  let localActive = null;
+  if (localExpiry) {
+    const expDate = new Date(localExpiry);
+    if (expDate > now) {
+      localActive = { artist_id: artistId, expires_at: expDate.toISOString() };
+    } else {
+      localStorage.removeItem(localKey);
+    }
+  }
+
+  if (DEMO_MODE) return localActive;
+
+  try {
+    await supabaseReady;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return localActive;
+
+    const { data, error } = await supabase
+      .from("subscriptions")
+      .select("id,artist_id,starts_at,expires_at")
+      .eq("user_id", user.id)
+      .eq("artist_id", artistId)
+      .gt("expires_at", now.toISOString())
+      .order("expires_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (data) {
+      localStorage.setItem(localKey, data.expires_at);
+      return data;
+    }
+  } catch (err) {
+    console.warn("Could not check subscription status:", err);
+  }
+
+  return localActive;
+}
+
+export function saveLocalSubscription(artistId, days = 30) {
+  if (!artistId) return;
+  const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+  localStorage.setItem(`zikly_sub_${artistId}`, expiresAt);
+  return expiresAt;
+}

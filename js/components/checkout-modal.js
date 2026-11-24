@@ -1,6 +1,7 @@
 import { openModal } from "./modal.js";
 import { formatXaf, escapeHtml } from "../utils/format.js";
 import { initiatePayment, checkPaymentStatus } from "../services/payment.service.js";
+import { saveLocalSubscription } from "../services/artist.service.js";
 import { toast } from "./toast.js";
 
 export function openCheckout({ title, price, targetType, targetId }) {
@@ -70,6 +71,9 @@ export function openCheckout({ title, price, targetType, targetId }) {
       try {
         const result = await checkPaymentStatus(paymentId);
         if (result.status === "SUCCESS") {
+          if (isSubscription && targetId) {
+            saveLocalSubscription(targetId);
+          }
           state.innerHTML =
             `<div class="state"><strong>Payment confirmed</strong><p>${isSubscription ? "Your 30-day subscription is active." : "The content is now in your Fan Vault."}</p><a class="btn" href="vault.html">Open Fan Vault</a></div>`;
           return;

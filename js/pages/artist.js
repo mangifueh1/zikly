@@ -1,5 +1,5 @@
 import { DEMO_MODE } from "../config/supabase.js";
-import { getArtistBySlug } from "../services/artist.service.js";
+import { getArtistBySlug, getFanSubscriptionForArtist } from "../services/artist.service.js";
 import { getProjectsByArtist } from "../services/project.service.js";
 import { projectCard } from "../components/project-card.js";
 import { categoryTabs } from "../components/category-tabs.js";
@@ -40,16 +40,26 @@ async function init() {
     if (artist.subscription_price_xaf) {
       const card = document.querySelector("#subscription-card");
       card.classList.remove("hidden");
-      card.innerHTML = `<div><span class="eyebrow">Support this creator</span><h2>Become a subscriber</h2>
-        <p>Get access to ${escapeHtml(artist.name)}'s exclusive releases for 30 days.</p>
-        <strong>${formatXaf(artist.subscription_price_xaf)} <small>one-time · 30 days</small></strong></div>
-        <button class="btn" type="button" id="subscribe-button"><i class="icon-heart-handshake"></i> Subscribe</button>`;
-      card.querySelector("#subscribe-button").addEventListener("click", () => openCheckout({
-        title: `${artist.name} subscription`,
-        price: artist.subscription_price_xaf,
-        targetType: "subscription",
-        targetId: artist.id,
-      }));
+      const activeSubscription = await getFanSubscriptionForArtist(artist.id);
+
+      if (activeSubscription) {
+        const expiresFormatted = new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(new Date(activeSubscription.expires_at));
+        card.innerHTML = `<div><span class="eyebrow">Active Subscription</span><h2>You're subscribed to ${escapeHtml(artist.name)}</h2>
+          <p>You have full access to ${escapeHtml(artist.name)}'s subscriber releases.</p>
+          <div style="margin-top:6px;"><span class="badge">Active until ${escapeHtml(expiresFormatted)}</span></div></div>
+          <a class="btn btn-secondary" href="vault.html"><i class="icon-library"></i> Open Fan Vault</a>`;
+      } else {
+        card.innerHTML = `<div><span class="eyebrow">Support this creator</span><h2>Become a subscriber</h2>
+          <p>Get access to ${escapeHtml(artist.name)}'s exclusive releases for 30 days.</p>
+          <strong>${formatXaf(artist.subscription_price_xaf)} <small>one-time · 30 days</small></strong></div>
+          <button class="btn" type="button" id="subscribe-button"><i class="icon-heart-handshake"></i> Subscribe</button>`;
+        card.querySelector("#subscribe-button").addEventListener("click", () => openCheckout({
+          title: `${artist.name} subscription`,
+          price: artist.subscription_price_xaf,
+          targetType: "subscription",
+          targetId: artist.id,
+        }));
+      }
     }
     const socials = Object.entries(artist.social_links || {})
       .filter(([, url]) => typeof url === "string" && /^https?:\/\//i.test(url))
