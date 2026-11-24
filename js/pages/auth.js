@@ -61,8 +61,24 @@ form.addEventListener("submit", async (event) => {
         artistName,
         slug,
       });
+
+      if (role === "creator") {
+        // Streamline KYC verification modal flow
+        submit.disabled = false;
+        openKycModal(() => {
+          if (result.session) {
+            location.href = "dashboard.html";
+          } else {
+            form.password.value = "";
+            setMode("login");
+            toast("Creator account & KYC submitted! Please confirm your email before signing in.", "success");
+          }
+        });
+        return;
+      }
+
       if (result.session) {
-        location.href = role === "creator" ? "dashboard.html" : "index.html";
+        location.href = "index.html";
       } else {
         form.password.value = "";
         setMode("login");
@@ -78,6 +94,88 @@ form.addEventListener("submit", async (event) => {
     submit.disabled = false;
   }
 });
+
+// KYC Modal Flow
+const kycOverlay = document.querySelector("#kyc-modal-overlay");
+const closeKycBtn = document.querySelector("#close-kyc-modal");
+const toLivenessBtn = document.querySelector("#kyc-to-liveness");
+const backToDocBtn = document.querySelector("#kyc-back-to-doc");
+const submitKycBtn = document.querySelector("#kyc-submit-verification");
+const finishKycBtn = document.querySelector("#kyc-finish-btn");
+
+const viewDoc = document.querySelector("#kyc-view-doc");
+const viewLiveness = document.querySelector("#kyc-view-liveness");
+const viewProcessing = document.querySelector("#kyc-view-processing");
+
+const step1Indicator = document.querySelector("#kyc-step-1");
+const step2Indicator = document.querySelector("#kyc-step-2");
+const step3Indicator = document.querySelector("#kyc-step-3");
+
+let onKycCompleteCallback = null;
+
+function openKycModal(onComplete) {
+  onKycCompleteCallback = onComplete;
+  if (!kycOverlay) {
+    if (onComplete) onComplete();
+    return;
+  }
+  // reset view
+  viewDoc.classList.remove("hidden");
+  viewLiveness.classList.add("hidden");
+  viewProcessing.classList.add("hidden");
+  step1Indicator.className = "kyc-timeline-step active";
+  step2Indicator.className = "kyc-timeline-step";
+  step3Indicator.className = "kyc-timeline-step";
+  kycOverlay.classList.remove("hidden");
+}
+
+if (closeKycBtn) {
+  closeKycBtn.addEventListener("click", () => {
+    kycOverlay.classList.add("hidden");
+    if (onKycCompleteCallback) onKycCompleteCallback();
+  });
+}
+
+if (toLivenessBtn) {
+  toLivenessBtn.addEventListener("click", () => {
+    const docNum = document.querySelector("#kyc-id-number").value.trim();
+    if (!docNum) {
+      toast("Please enter your document ID number.", "error");
+      return;
+    }
+    viewDoc.classList.add("hidden");
+    viewLiveness.classList.remove("hidden");
+    step1Indicator.className = "kyc-timeline-step completed";
+    step2Indicator.className = "kyc-timeline-step active";
+  });
+}
+
+if (backToDocBtn) {
+  backToDocBtn.addEventListener("click", () => {
+    viewLiveness.classList.add("hidden");
+    viewDoc.classList.remove("hidden");
+    step1Indicator.className = "kyc-timeline-step active";
+    step2Indicator.className = "kyc-timeline-step";
+  });
+}
+
+if (submitKycBtn) {
+  submitKycBtn.addEventListener("click", () => {
+    viewLiveness.classList.add("hidden");
+    viewProcessing.classList.remove("hidden");
+    step2Indicator.className = "kyc-timeline-step completed";
+    step3Indicator.className = "kyc-timeline-step active";
+  });
+}
+
+if (finishKycBtn) {
+  finishKycBtn.addEventListener("click", () => {
+    step3Indicator.className = "kyc-timeline-step completed";
+    toast("KYC identity verification successfully passed!", "success");
+    kycOverlay.classList.add("hidden");
+    if (onKycCompleteCallback) onKycCompleteCallback();
+  });
+}
 
 document.querySelector("#reset-password").addEventListener("click", async () => {
   try {

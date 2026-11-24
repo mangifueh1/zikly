@@ -32,6 +32,17 @@
           <div id="creator-fields" class="form-stack hidden">
             <div class="field"><label for="artistName">Creator name</label><input id="artistName" name="artistName" autocomplete="organization"></div>
             <div class="field"><label for="slug">Profile URL</label><input id="slug" name="slug" placeholder="artist-name" autocomplete="username"></div>
+            
+            <div class="kyc-badge-callout">
+              <div class="kyc-header">
+                <i class="icon-shield-check"></i>
+                <div>
+                  <strong>Creator Identity Verification (KYC)</strong>
+                  <p>Streamlined verification is required for independent creators to receive payouts.</p>
+                </div>
+              </div>
+              <div class="kyc-step-pill">Step 1 of 2 · Ready for signup</div>
+            </div>
           </div>
         </div>
         <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
@@ -45,6 +56,100 @@
       <div class="auth-switch"><button id="reset-password" type="button">Forgot your password?</button></div>
     </section>
   </main>
+  
+  <div id="kyc-modal-overlay" class="modal-backdrop hidden" aria-modal="true" role="dialog">
+    <div class="modal kyc-modal">
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow"><i class="icon-shield-check"></i> Verified Creator Program</span>
+          <h2>Creator KYC Verification</h2>
+        </div>
+        <button id="close-kyc-modal" class="modal-close" type="button" aria-label="Skip KYC for now">&times;</button>
+      </div>
+      <div class="kyc-body">
+        <p class="kyc-description">
+          To comply with regional payout regulations and protect intellectual property, creators verify their real identity before publishing or withdrawing earnings.
+        </p>
+
+        <div class="kyc-steps-timeline">
+          <div class="kyc-timeline-step active" id="kyc-step-1">
+            <span class="step-num">1</span>
+            <span>Document</span>
+          </div>
+          <div class="kyc-timeline-step" id="kyc-step-2">
+            <span class="step-num">2</span>
+            <span>Live Liveness</span>
+          </div>
+          <div class="kyc-timeline-step" id="kyc-step-3">
+            <span class="step-num">3</span>
+            <span>Review</span>
+          </div>
+        </div>
+
+        <form id="kyc-streamline-form" class="form-stack">
+          <div id="kyc-view-doc" class="kyc-view">
+            <div class="field">
+              <label for="kyc-id-type">Government ID Type</label>
+              <select id="kyc-id-type">
+                <option value="cni">National Identity Card (CNI)</option>
+                <option value="passport">International Passport</option>
+                <option value="driver">Driver's License</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="kyc-id-number">Document / ID Number</label>
+              <input id="kyc-id-number" type="text" placeholder="e.g. 119840294" required>
+            </div>
+            <div class="field">
+              <label for="kyc-file-doc">Upload Document Front</label>
+              <input id="kyc-file-doc" type="file" accept="image/*,.pdf" required>
+              <small>Take a clear photo or upload your identity document.</small>
+            </div>
+            <button type="button" id="kyc-to-liveness" class="btn btn-accent" style="width:100%; margin-top: 10px;">
+              Continue to Selfie Check <i class="icon-arrow-right"></i>
+            </button>
+          </div>
+
+          <div id="kyc-view-liveness" class="kyc-view hidden">
+            <div class="liveness-simulation-box">
+              <div class="face-oval-scanner">
+                <i class="icon-scan-face"></i>
+                <div class="scanner-laser"></div>
+              </div>
+              <p>Position your face in the oval and ensure good lighting.</p>
+            </div>
+            <div class="field" style="margin-top:12px;">
+              <label for="kyc-selfie-file">Upload or take selfie</label>
+              <input id="kyc-selfie-file" type="file" accept="image/*" capture="user">
+            </div>
+            <div class="kyc-nav-buttons">
+              <button type="button" id="kyc-back-to-doc" class="btn btn-outline btn-small">Back</button>
+              <button type="button" id="kyc-submit-verification" class="btn btn-accent" style="flex:1;">
+                Submit for Instant Check <i class="icon-check-circle"></i>
+              </button>
+            </div>
+          </div>
+
+          <div id="kyc-view-processing" class="kyc-view hidden">
+            <div class="kyc-processing-box">
+              <div class="kyc-spinner"></div>
+              <h3>Verifying your documents…</h3>
+              <p>Checking biometric match and document authenticity against regional registers.</p>
+              <div class="kyc-audit-checks">
+                <div class="check-item"><i class="icon-check"></i> Document integrity verified</div>
+                <div class="check-item"><i class="icon-check"></i> Anti-spoofing facial match score: 99.4%</div>
+                <div class="check-item"><i class="icon-check"></i> AML / Sanctions screening: Cleared</div>
+              </div>
+            </div>
+            <button type="button" id="kyc-finish-btn" class="btn btn-accent" style="width:100%; margin-top:16px;">
+              Proceed to Creator Studio <i class="icon-arrow-right"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="js/pages/auth.js"></script>
 </body>
 </html>

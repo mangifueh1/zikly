@@ -24,6 +24,40 @@
 .section-heading h2 { margin:7px 0 0;font-size:clamp(1.8rem,4vw,3rem); }
 .section-heading > p { max-width:400px;color:var(--muted); }
 .project-grid { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px; }
+.project-scroll-container {
+  position: relative;
+  width: 100%;
+}
+.project-scroll-track {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 16px;
+  padding-top: 4px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.project-scroll-track::-webkit-scrollbar {
+  height: 6px;
+}
+.project-scroll-track::-webkit-scrollbar-track {
+  background: transparent;
+}
+.project-scroll-track::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 999px;
+}
+.project-scroll-track::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+.project-scroll-track .project-card {
+  flex: 0 0 280px;
+  max-width: 280px;
+  scroll-snap-align: start;
+}
 #featured-project-list .project-action-label { font-size:.78rem; }
 .artist-grid { display:grid; }
 .artist-grid { display:grid;gap:12px; }

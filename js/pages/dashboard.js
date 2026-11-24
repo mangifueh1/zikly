@@ -3,7 +3,7 @@ import { getCurrentProfile, signOut } from "../services/auth.service.js";
 import { getOwnedArtist, updateArtistProfile } from "../services/artist.service.js";
 import { getOwnedProjects, createProject, updateProject, deleteProject } from "../services/project.service.js";
 import { getOwnedTracks, createTrack, deleteTrack } from "../services/track.service.js";
-import { uploadMedia, deleteMedia } from "../services/storage.service.js";
+import { uploadMedia, deleteMedia, uploadImageAsDataUrl } from "../services/storage.service.js";
 import { formatXaf, escapeHtml } from "../utils/format.js";
 import { toast } from "../components/toast.js";
 import { setupMobileNavigation } from "../components/mobile-navigation.js";
@@ -105,6 +105,17 @@ function uploadForm() {
         <select id="media-type" name="type"><option value="audio">Audio</option><option value="video">Video</option><option value="image">Image</option></select></div>
       <div class="field"><label for="media-file">Choose file</label><input id="media-file" name="file" type="file" accept="audio/mpeg,audio/mp4,audio/x-m4a,audio/aac,audio/ogg,audio/flac,audio/wav" required>
         <small>Maximum file size: 100 MB. Supported formats: MP3, MP4/M4A/AAC, OGG, FLAC, WAV, MP4/WebM video, JPEG, PNG, and WebP.</small></div>
+      
+      <div class="field">
+        <label for="project-cover-file">Project cover picture (Optional)</label>
+        <input id="project-cover-file" name="cover_file" type="file" accept="image/jpeg,image/png,image/webp">
+        <div id="project-cover-preview" class="upload-image-preview hidden">
+          <img src="" alt="Project cover preview">
+          <button type="button" class="btn btn-outline btn-small remove-preview-btn"><i class="icon-x"></i> Remove</button>
+        </div>
+        <small>Upload artwork for your project release. Max 5 MB.</small>
+      </div>
+
       <div class="field"><label for="media-category">Category</label>
         <select id="media-category" name="category"><option value="single">Single</option><option value="ep">EP</option><option value="visual">Visual</option><option value="vault_extra">Vault extra</option></select></div>
       <div class="field"><label for="media-access">Access</label>
@@ -117,6 +128,30 @@ function uploadForm() {
   const form = section.querySelector("#media-form");
   const typeInput = form.elements.type;
   const fileInput = form.elements.file;
+  const coverFileInput = form.elements.cover_file;
+  const coverPreview = section.querySelector("#project-cover-preview");
+  let coverDataUrl = null;
+
+  coverFileInput.addEventListener("change", async () => {
+    const file = coverFileInput.files[0];
+    if (!file) return;
+    try {
+      coverDataUrl = await uploadImageAsDataUrl(file, 900);
+      coverPreview.querySelector("img").src = coverDataUrl;
+      coverPreview.classList.remove("hidden");
+    } catch (err) {
+      toast(err.message, "error");
+      coverFileInput.value = "";
+    }
+  });
+
+  coverPreview.querySelector(".remove-preview-btn").addEventListener("click", () => {
+    coverDataUrl = null;
+    coverFileInput.value = "";
+    coverPreview.classList.add("hidden");
+    coverPreview.querySelector("img").src = "";
+  });
+
   typeInput.addEventListener("change", () => {
     fileInput.accept = typeInput.value === "audio"
       ? "audio/mpeg,audio/mp4,audio/x-m4a,audio/aac,audio/ogg,audio/flac,audio/wav"
@@ -163,6 +198,7 @@ function uploadForm() {
         title: form.elements.title.value.trim(),
         description: form.elements.description.value.trim(),
         category: form.elements.category.value,
+        cover_url: coverDataUrl || null,
         is_paid: false,
         price_xaf: null,
         is_published: false,
@@ -215,16 +251,96 @@ function profileSettings() {
       <div class="field"><label for="creator-name">Creator name</label><input id="creator-name" name="name" value="${escapeHtml(artist.name)}" maxlength="100" required></div>
       <div class="field"><label for="creator-slug">Profile URL</label><input id="creator-slug" value="${escapeHtml(artist.slug)}" disabled></div>
       <div class="field"><label for="creator-bio">Biography</label><textarea id="creator-bio" name="bio" rows="4" maxlength="1000">${escapeHtml(artist.bio || "")}</textarea></div>
-      <div class="field"><label for="creator-avatar">Profile image URL</label><input id="creator-avatar" name="avatar_url" type="url" value="${escapeHtml(artist.avatar_url || "")}" placeholder="https://"></div>
-      <div class="field"><label for="creator-cover">Cover image URL</label><input id="creator-cover" name="cover_url" type="url" value="${escapeHtml(artist.cover_url || "")}" placeholder="https://"></div>
+      
+      <div class="field">
+        <label>Profile picture</label>
+        <div class="image-uploader-box">
+          <div class="avatar-preview-wrap">
+            <div class="artist-avatar" id="avatar-preview-circle">
+              ${artist.avatar_url ? `<img src="${escapeHtml(artist.avatar_url)}" alt="Avatar preview">` : `<i class="icon-user"></i>`}
+            </div>
+            <div class="uploader-inputs">
+              <input id="avatar-file" type="file" accept="image/jpeg,image/png,image/webp">
+              <input id="creator-avatar" name="avatar_url" type="url" value="${escapeHtml(artist.avatar_url || "")}" placeholder="Or paste image URL (https://)">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Cover photo</label>
+        <div class="image-uploader-box">
+          <div class="cover-preview-wrap">
+            <div class="cover-preview-box" id="cover-preview-rect">
+              ${artist.cover_url ? `<img src="${escapeHtml(artist.cover_url)}" alt="Cover preview">` : `<span>No cover photo uploaded</span>`}
+            </div>
+            <div class="uploader-inputs">
+              <input id="cover-file" type="file" accept="image/jpeg,image/png,image/webp">
+              <input id="creator-cover" name="cover_url" type="url" value="${escapeHtml(artist.cover_url || "")}" placeholder="Or paste image URL (https://)">
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="field"><label for="subscription-price">30-day subscription price (XAF)</label><input id="subscription-price" name="subscription_price_xaf" type="number" min="100" step="50" value="${artist.subscription_price_xaf || ""}" placeholder="Leave blank to disable subscriptions"></div>
       <div class="field"><label for="instagram">Instagram URL</label><input id="instagram" type="url" value="${escapeHtml(artist.social_links?.instagram || "")}" placeholder="https://instagram.com/"></div>
       <div class="field"><label for="youtube">YouTube URL</label><input id="youtube" type="url" value="${escapeHtml(artist.social_links?.youtube || "")}" placeholder="https://youtube.com/"></div>
       <button class="btn" type="submit">Save profile</button>
     </form>`;
-  section.querySelector("#profile-form").addEventListener("submit", async (event) => {
+
+  const form = section.querySelector("#profile-form");
+  const avatarFile = form.querySelector("#avatar-file");
+  const avatarUrlInput = form.querySelector("#creator-avatar");
+  const avatarPreview = form.querySelector("#avatar-preview-circle");
+
+  const coverFile = form.querySelector("#cover-file");
+  const coverUrlInput = form.querySelector("#creator-cover");
+  const coverPreview = form.querySelector("#cover-preview-rect");
+
+  avatarFile.addEventListener("change", async () => {
+    const file = avatarFile.files[0];
+    if (!file) return;
+    try {
+      const dataUrl = await uploadImageAsDataUrl(file, 400);
+      avatarUrlInput.value = dataUrl;
+      avatarPreview.innerHTML = `<img src="${dataUrl}" alt="Avatar preview">`;
+    } catch (err) {
+      toast(err.message, "error");
+    }
+  });
+
+  avatarUrlInput.addEventListener("input", () => {
+    const url = avatarUrlInput.value.trim();
+    if (url) {
+      avatarPreview.innerHTML = `<img src="${escapeHtml(url)}" alt="Avatar preview" onerror="this.remove()">`;
+    } else {
+      avatarPreview.innerHTML = `<i class="icon-user"></i>`;
+    }
+  });
+
+  coverFile.addEventListener("change", async () => {
+    const file = coverFile.files[0];
+    if (!file) return;
+    try {
+      const dataUrl = await uploadImageAsDataUrl(file, 1600);
+      coverUrlInput.value = dataUrl;
+      coverPreview.innerHTML = `<img src="${dataUrl}" alt="Cover preview">`;
+    } catch (err) {
+      toast(err.message, "error");
+    }
+  });
+
+  coverUrlInput.addEventListener("input", () => {
+    const url = coverUrlInput.value.trim();
+    if (url) {
+      coverPreview.innerHTML = `<img src="${escapeHtml(url)}" alt="Cover preview" onerror="this.remove()">`;
+    } else {
+      coverPreview.innerHTML = `<span>No cover photo uploaded</span>`;
+    }
+  });
+
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const form = event.currentTarget;
     const save = form.querySelector('button[type="submit"]');
     save.disabled = true;
     try {
@@ -234,16 +350,28 @@ function profileSettings() {
       const socialLinks = {};
       if (form.querySelector("#instagram").value.trim()) socialLinks.instagram = form.querySelector("#instagram").value.trim();
       if (form.querySelector("#youtube").value.trim()) socialLinks.youtube = form.querySelector("#youtube").value.trim();
+      
+      const updatedAvatar = avatarUrlInput.value.trim() || null;
+      const updatedCover = coverUrlInput.value.trim() || null;
+
       await updateArtistProfile(artist.id, {
         name: form.elements.name.value.trim(),
         bio: form.elements.bio.value.trim(),
-        avatar_url: form.elements.avatar_url.value.trim() || null,
-        cover_url: form.elements.cover_url.value.trim() || null,
+        avatar_url: updatedAvatar,
+        cover_url: updatedCover,
         subscription_price_xaf: price,
         social_links: socialLinks,
       });
-      artist = { ...artist, name: form.elements.name.value.trim(), bio: form.elements.bio.value.trim(), subscription_price_xaf: price, social_links: socialLinks };
-      toast("Profile saved.", "success");
+      artist = {
+        ...artist,
+        name: form.elements.name.value.trim(),
+        bio: form.elements.bio.value.trim(),
+        avatar_url: updatedAvatar,
+        cover_url: updatedCover,
+        subscription_price_xaf: price,
+        social_links: socialLinks
+      };
+      toast("Profile saved successfully.", "success");
     } catch (error) {
       showError(error);
     } finally {
