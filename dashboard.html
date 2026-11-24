@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zikly — Artist Studio</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <div id="demo-banner" class="demo-banner hidden">Demo mode — connect Supabase to manage content and view live analytics.</div>
+  <header class="topbar shell">
+    <a class="brand" href="index.html">Zikly<span>.</span></a>
+    <button class="menu-button" id="menu-button" type="button" aria-label="Open navigation" aria-expanded="false"><i class="icon-menu"></i></button>
+    <nav class="main-nav">
+      <a class="nav-link" id="my-profile-link" href="index.html">My Profile</a>
+      <a class="nav-link" href="index.html">Home</a>
+      <button class="nav-link nav-button" id="logout" type="button">Log out</button>
+    </nav>
+  </header>
+  <main class="dashboard">
+    <aside class="dashboard-side">
+      <a class="dashboard-brand" href="index.html"><i class="icon-layout-dashboard"></i> Creator Studio</a>
+      <nav class="dashboard-nav" aria-label="Dashboard sections">
+        <button class="active" type="button" data-section="overview"><i class="icon-layout-dashboard"></i> Overview</button>
+        <button type="button" data-section="media"><i class="icon-library"></i> Manage Media</button>
+        <button type="button" data-section="upload"><i class="icon-upload"></i> Upload Content</button>
+        <button type="button" data-section="profile"><i class="icon-user-round-cog"></i> Account Settings</button>
+      </nav>
+    </aside>
+    <section class="dashboard-main" id="dashboard-section"></section>
+  </main>
+  <script type="module" src="js/pages/dashboard.js"></script>
+</body>
+</html>

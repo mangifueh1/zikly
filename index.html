@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zikly — Discover independent creators</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/artist.css">
+  <link rel="stylesheet" href="css/home.css">
+</head>
+
+<body>
+  <div id="demo-banner" class="demo-banner hidden">Demo preview — connect Supabase for production artist data and
+    purchases.</div>
+  <header class="topbar shell">
+    <a class="brand" href="index.html" aria-label="Zikly home">Zikly<span>.</span></a>
+    <button class="menu-button" id="menu-button" type="button" aria-label="Open navigation" aria-expanded="false"><i
+        class="icon-menu"></i></button>
+    <nav class="main-nav" aria-label="Primary navigation">
+      <a class="nav-link" href="#discover">Discover</a>
+      <a class="nav-link" href="projects.html">Explore projects</a>
+      <a class="nav-link" href="creators.html">Explore creators</a>
+      <a class="nav-link" href="auth.html">For Artists</a>
+      <a class="btn btn-small" href="auth.html">Artist sign in</a>
+    </nav>
+  </header>
+  <main>
+    <section class="home-hero shell">
+      <div class="hero-copy">
+        <span class="eyebrow">Independent creators, direct support</span>
+        <h1>Discover creators. Support what they make.</h1>
+        <p>Explore music, films, and more—and unlock exclusive work directly from the creators you love.</p>
+        <div class="search-wrap">
+          <i class="icon-search" aria-hidden="true"></i>
+          <input id="artist-search" type="search" placeholder="Search artists by name..." autocomplete="off"
+            aria-label="Search artists">
+          <div id="search-results" class="search-results hidden" role="listbox"></div>
+        </div>
+        <a class="hero-link" href="projects.html">Explore creator projects <i class="icon-arrow-right"></i></a>
+      </div>
+    </section>
+
+    <section class="home-section shell" id="discover">
+      <div class="section-heading">
+        <div><span class="eyebrow">Fresh releases</span>
+          <h2>Discover great projects</h2>
+        </div>
+        <p>Explore the latest projects from independent creators.</p>
+      </div>
+      <div id="featured-project-list" class="project-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="home-section shell" id="artists">
+      <div class="section-heading">
+        <div><span class="eyebrow">Creators</span>
+          <h2>Featured creators</h2>
+        </div>
+      </div>
+      <div id="featured-artist-list" class="artist-grid"></div>
+    </section>
+
+    <section class="home-cta shell">
+      <div>
+        <span class="eyebrow">Made for independent creators</span>
+        <h2>Your favourite creator deserves your support.</h2>
+        <p>Unlock exclusive projects and directly support independent creators in your community.</p>
+      </div>
+      <a class="artist-cta-button" href="auth.html">
+        <span>Join Zikly as a creator</span>
+        <i class="icon-arrow-right" aria-hidden="true"></i>
+      </a>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="shell footer-grid">
+      <div><a class="brand" href="index.html">Zikly<span>.</span></a>
+        <p>Independent sound. Direct support.</p>
+      </div>
+      <nav><a href="#discover">Discover</a><a href="#artists">For Creators</a></nav>
+      <nav><a href="account.html">Account settings</a><a href="mailto:hello@zikly.com">Contact</a><span>Terms · coming
+          soon</span><span>Privacy · coming soon</span></nav>
+      <small>© 2026 Zikly</small>
+    </div>
+  </footer>
+  <script type="module" src="js/pages/home.js"></script>
+  <script type="module" src="js/components/navigation.js"></script>
+</body>
+
+</html>

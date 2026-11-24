@@ -1,0 +1,25 @@
+.vault-layout { max-width:900px; margin:auto; padding:48px 0 100px; }
+.vault-heading h1 { font-size:clamp(2.8rem,7vw,5rem); margin:8px 0 10px; }
+.vault-heading p { font-size:1.05rem; }
+.vault-access { display:grid;grid-template-columns:1fr auto;align-items:center;gap:30px;margin:28px 0;padding:24px;border:1px solid var(--line);border-radius:16px;background:white; }
+.vault-access > div > i { display:grid;place-items:center;width:44px;height:44px;border-radius:10px;background:var(--accent-soft);color:var(--accent-dark); }
+.vault-access h2 { margin:14px 0 6px;font-size:1.25rem; }
+.vault-access p { color:var(--muted);font-size:.88rem;margin:0; }
+.vault-results { display:grid;gap:12px;margin-top:24px; }
+.vault-results .state { display:grid;place-items:center;gap:8px;min-height:210px; }
+.vault-results .state i { font-size:2rem;color:var(--muted); }
+.vault-results .state strong { color:var(--ink); }
+.vault-results .state span { font-size:.88rem; }
+.vault-subscriptions { margin:28px 0; }
+.vault-subscriptions h2 { font-size:1.15rem; }
+.subscription-list { display:grid;gap:8px; }
+.subscription-row { display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);border-radius:12px;background:white; }
+.subscription-row > span:last-of-type { color:var(--muted);font-size:.82rem; }
+.subscription-row a { margin-left:auto;color:var(--accent-dark);font-size:.82rem;font-weight:750; }
+.vault-item { display:grid;grid-template-columns:minmax(0,1fr) minmax(180px, 320px) auto;align-items:center;gap:16px;padding:16px;border:1px solid var(--line);border-radius:14px;background:white; }
+.vault-item-copy h2 { margin:6px 0 4px;font-size:1rem; }
+.vault-item-copy p { margin:0;color:var(--muted);font-size:.82rem; }
+.vault-item audio,.vault-item video { width:100%;max-width:320px; }
+.vault-image { width:100%;max-height:240px;object-fit:contain;border-radius:8px;background:var(--paper); }
+@media(max-width:760px){ .vault-layout { padding-top:32px; }.vault-access { grid-template-columns:1fr; } }
+@media(max-width:760px){ .vault-item { grid-template-columns:1fr; }.vault-item .btn { width:100%; }.subscription-row { align-items:flex-start;flex-wrap:wrap; }.subscription-row a { margin-left:0;width:100%; } }

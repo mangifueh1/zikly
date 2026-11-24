@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zikly — Explore projects</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/browse.css">
+</head>
+<body>
+  <div id="demo-banner" class="demo-banner hidden">Demo preview — connect Supabase for production project data.</div>
+  <header class="topbar shell">
+    <a class="brand" href="index.html" aria-label="Zikly home">Zikly<span>.</span></a>
+    <button class="menu-button" id="menu-button" type="button" aria-label="Open navigation" aria-expanded="false"><i class="icon-menu"></i></button>
+    <nav class="main-nav" aria-label="Primary navigation">
+      <a class="nav-link" href="index.html#discover">Discover</a>
+      <a class="nav-link" href="projects.html" aria-current="page">Explore projects</a>
+      <a class="nav-link" href="creators.html">Explore creators</a>
+      <a class="btn btn-small" href="auth.html">Artist sign in</a>
+    </nav>
+  </header>
+  <main class="shell browse-page" data-browse-type="projects">
+    <span class="eyebrow">Made by independent creators</span>
+    <h1>Explore projects</h1>
+    <p class="browse-intro">Search releases, films, and other work from independent creators.</p>
+    <label class="search-wrap browse-search">
+      <i class="icon-search" aria-hidden="true"></i>
+      <input id="browse-search" type="search" placeholder="Search projects by title..." autocomplete="off" aria-label="Search projects">
+    </label>
+    <div id="browse-results" class="browse-results project-grid" aria-live="polite">
+      <div class="state">Start typing to search projects.</div>
+    </div>
+  </main>
+  <script type="module" src="js/pages/browse.js"></script>
+  <script type="module" src="js/components/navigation.js"></script>
+</body>
+</html>

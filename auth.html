@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zikly — Account</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+  <header class="topbar shell">
+    <a class="brand" href="index.html">Zikly<span>.</span></a>
+    <a class="nav-link" href="index.html">Discover</a>
+  </header>
+  <main class="auth-layout">
+    <section class="auth-panel-copy">
+      <span class="eyebrow">Creators and fans</span>
+      <h1>Good music brings us closer.</h1>
+      <p>Discover independent creators, share your work, and support the music you love.</p>
+      <div class="auth-art"><i class="icon-disc-3"></i></div>
+    </section>
+    <section class="auth-card">
+      <span class="eyebrow">Your Zikly account</span>
+      <h1 id="auth-title">Welcome back</h1>
+      <form id="auth-form" class="form-stack">
+        <div id="signup-fields" class="form-stack hidden">
+          <div class="field"><label for="account-role">I am joining as</label>
+            <select id="account-role" name="role"><option value="fan">Fan</option><option value="creator">Creator</option></select>
+          </div>
+          <div id="creator-fields" class="form-stack hidden">
+            <div class="field"><label for="artistName">Creator name</label><input id="artistName" name="artistName" autocomplete="organization"></div>
+            <div class="field"><label for="slug">Profile URL</label><input id="slug" name="slug" placeholder="artist-name" autocomplete="username"></div>
+          </div>
+        </div>
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+        <div class="field password-field"><label for="password">Password</label><div><input id="password" name="password" type="password" minlength="8" autocomplete="current-password" required><button id="password-toggle" type="button" aria-label="Show password"><i class="icon-eye"></i></button></div></div>
+        <button id="auth-submit" class="btn" type="submit">Sign in <i class="icon-arrow-right"></i></button>
+      </form>
+      <div class="auth-switch">
+        <span id="auth-switch-label">New to Zikly?</span>
+        <button id="auth-switch" type="button">Create Account</button>
+      </div>
+      <div class="auth-switch"><button id="reset-password" type="button">Forgot your password?</button></div>
+    </section>
+  </main>
+  <script type="module" src="js/pages/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zikly — Account settings</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+  <header class="topbar shell">
+    <a class="brand" href="index.html">Zikly<span>.</span></a>
+    <button class="menu-button" id="menu-button" type="button" aria-label="Open navigation" aria-expanded="false"><i class="icon-menu"></i></button>
+    <nav class="main-nav" aria-label="Primary navigation">
+      <a class="nav-link" href="index.html#discover">Discover</a><a class="nav-link" href="projects.html">Explore Projects</a><a class="nav-link" href="creators.html">Explore Creators</a>
+      <a class="nav-link" href="auth.html">Sign in</a>
+    </nav>
+  </header>
+  <main class="account-layout">
+    <section class="auth-card">
+      <span class="eyebrow">Account</span>
+      <h1>Account settings</h1>
+      <div id="account-details" class="form-stack">
+        <div class="state" role="status">Loading your account…</div>
+      </div>
+      <form id="password-form" class="form-stack hidden">
+        <h2>Change password</h2>
+        <div class="field"><label for="new-password">New password</label><input id="new-password" type="password" minlength="8" autocomplete="new-password" required></div>
+        <button class="btn" type="submit">Update password</button>
+      </form>
+      <button id="account-logout" class="btn btn-outline hidden" type="button">Log out</button>
+    </section>
+  </main>
+  <script type="module" src="js/pages/account.js"></script>
+  <script type="module" src="js/components/navigation.js"></script>
+</body>
+</html>
