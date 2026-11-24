@@ -76,7 +76,7 @@ async function init() {
               previewDuration,
               onPreviewEnd: () => {
                 toast("Audio preview ended. Unlock to hear the full release!", "info");
-                openCheckout({ title: trackTitle, price, targetType: "track", targetId });
+                openCheckout({ title: trackTitle, price, targetType: "track", targetId: trackId });
               },
             });
           } else if (trackType === "video") {
@@ -102,14 +102,14 @@ async function init() {
                 videoEl.removeEventListener("timeupdate", onTime);
                 modal.close();
                 toast("Video glimpse ended. Unlock to watch completely!", "info");
-                openCheckout({ title: trackTitle, price, targetType: "track", targetId });
+                openCheckout({ title: trackTitle, price, targetType: "track", targetId: trackId });
               }
             };
             videoEl.addEventListener("timeupdate", onTime);
             modal.backdrop.querySelector(".modal-close").addEventListener("click", modal.close);
             modal.backdrop.querySelector("#preview-unlock-now").addEventListener("click", () => {
               modal.close();
-              openCheckout({ title: trackTitle, price, targetType: "track", targetId });
+              openCheckout({ title: trackTitle, price, targetType: "track", targetId: trackId });
             });
           } else {
             const media = `<img src="${escapeHtml(access.url)}" alt="${escapeHtml(trackTitle)}" style="max-height:65vh;object-fit:contain;filter:blur(3px);">`;
@@ -130,12 +130,12 @@ async function init() {
             modal.backdrop.querySelector(".modal-close").addEventListener("click", modal.close);
             modal.backdrop.querySelector("#preview-unlock-now").addEventListener("click", () => {
               modal.close();
-              openCheckout({ title: trackTitle, price, targetType: "track", targetId });
+              openCheckout({ title: trackTitle, price, targetType: "track", targetId: trackId });
             });
           }
           return;
         }
-        throw new Error("Preview unavailable.");
+        throw new Error("No playable preview URL was returned. Check that the track has an uploaded file and is published.");
       } catch (err) {
         toast(err.message || "Preview unavailable.", "error");
       } finally {

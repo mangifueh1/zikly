@@ -1,7 +1,9 @@
 import { DEMO_MODE, supabase, supabaseReady } from "../config/supabase.js";
 
 export async function getMediaAccess(trackId, { preview = false, download = false } = {}) {
-  if (DEMO_MODE) return null;
+  if (DEMO_MODE) {
+    throw new Error("Demo tracks don't include playable media. Connect Supabase and upload a file to enable playback.");
+  }
   await supabaseReady;
   const { data, error } = await supabase.functions.invoke("get-media-access", {
     body: { track_id: trackId, preview, download },
