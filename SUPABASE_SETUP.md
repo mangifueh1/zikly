@@ -27,7 +27,7 @@ Media paths follow `creator-id/project-id/filename.ext`.
 
 ## Authentication
 
-Enable Email/Password authentication. Set the Site URL to `https://zikly.vercel.app` and add `https://zikly.vercel.app/auth.html` and `http://localhost:3000/auth.html` as redirect URLs. These URLs are also recorded in `supabase/config.toml`. Role assignment is validated by the `handle_new_user` database trigger and is not writable by normal frontend queries.
+Enable Email/Password authentication. Set the Site URL to `https://zikly.vercel.app` and add `https://zikly.vercel.app/auth.html` and `http://localhost:3000/auth.html` as redirect URLs. Signup confirmation emails return users to the production login page. These URLs are also recorded in `supabase/config.toml`. Role assignment is validated by the `handle_new_user` database trigger and is not writable by normal frontend queries.
 
 ## Edge Functions
 

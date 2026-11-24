@@ -6,7 +6,10 @@ export async function signUp({ email, password, role, artistName, slug }) {
   const { data, error } = await client.auth.signUp({
     email,
     password,
-    options: { data: { role, artist_name: artistName, artist_slug: slug } },
+    options: {
+      data: { role, artist_name: artistName, artist_slug: slug },
+      emailRedirectTo: "https://zikly.vercel.app/auth.html",
+    },
   });
   if (error) throw error;
   return data;

@@ -7,6 +7,17 @@ const title = document.querySelector("#auth-title");
 const submit = document.querySelector("#auth-submit");
 let mode = "login";
 
+function setMode(nextMode) {
+  mode = nextMode;
+  const isLogin = mode === "login";
+  title.textContent = isLogin ? "Welcome back" : "Create your account";
+  submit.textContent = isLogin ? "Sign in" : "Create account";
+  document.querySelector("#auth-switch").textContent = isLogin ? "Create Account" : "Log In";
+  document.querySelector("#signup-fields").classList.toggle("hidden", isLogin);
+  document.querySelector("#auth-switch-label").textContent =
+    isLogin ? "New to Zikly?" : "Already have an account?";
+}
+
 document.querySelector("#password-toggle")?.addEventListener("click", (event) => {
   const password = form.password;
   password.type = password.type === "password" ? "text" : "password";
@@ -14,13 +25,7 @@ document.querySelector("#password-toggle")?.addEventListener("click", (event) =>
 });
 
 document.querySelector("#auth-switch").addEventListener("click", () => {
-  mode = mode === "login" ? "signup" : "login";
-  title.textContent = mode === "login" ? "Welcome back" : "Create your account";
-  submit.textContent = mode === "login" ? "Sign in" : "Create account";
-  document.querySelector("#auth-switch").textContent = mode === "login" ? "Create Account" : "Log In";
-  document.querySelector("#signup-fields").classList.toggle("hidden", mode !== "signup");
-  document.querySelector("#auth-switch-label").textContent =
-    mode === "login" ? "New to Zikly?" : "Already have an account?";
+  setMode(mode === "login" ? "signup" : "login");
 });
 
 document.querySelector("#account-role").addEventListener("change", (event) => {
@@ -59,7 +64,9 @@ form.addEventListener("submit", async (event) => {
       if (result.session) {
         location.href = role === "creator" ? "dashboard.html" : "index.html";
       } else {
-        toast("Account created. Check your email to verify it before signing in.", "success");
+        form.password.value = "";
+        setMode("login");
+        toast("Account created. Check your email and confirm it before signing in.", "success");
       }
     } else {
       const result = await signIn(email, password);
