@@ -25,7 +25,14 @@ async function initDiscovery() {
 
   const artistList = document.querySelector("#featured-artist-list");
   try {
-    const artists = await getFeaturedArtists();
+    const rawArtists = await getFeaturedArtists();
+    const artists = rawArtists
+      .filter((artist) => {
+        const name = (artist.name || "").trim().toLowerCase();
+        const slug = (artist.slug || "").trim().toLowerCase();
+        return name !== "test artist" && !name.startsWith("test ") && slug !== "test-artist";
+      })
+      .slice(0, 3);
     artistList.innerHTML = artists.length
       ? artists.map((artist) => `
       <article class="artist-card">
