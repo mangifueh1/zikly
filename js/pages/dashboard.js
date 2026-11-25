@@ -6,6 +6,7 @@ import { getOwnedTracks, createTrack, deleteTrack } from "../services/track.serv
 import { uploadMedia, deleteMedia, uploadImageAsDataUrl } from "../services/storage.service.js";
 import { formatXaf, escapeHtml } from "../utils/format.js";
 import { toast } from "../components/toast.js";
+import { openModal } from "../components/modal.js";
 import { setupMobileNavigation } from "../components/mobile-navigation.js";
 
 setupMobileNavigation();
@@ -94,20 +95,79 @@ async function mediaList() {
   section.querySelectorAll("[data-delete-track]").forEach((button) => {
     button.addEventListener("click", async () => {
       const track = tracks.find((item) => item.id === button.dataset.deleteTrack);
-      if (!track || !window.confirm(`Delete "${track.title}"? This cannot be undone.`)) return;
-      button.disabled = true;
-      try {
-        await deleteTrack(track.id);
-        const path = track.media_path || track.audio_path;
-        if (path) await deleteMedia(path);
-        const remaining = await getOwnedTracks([track.project_id]);
-        if (!remaining.length) await deleteProject(track.project_id);
-        toast("Media deleted.", "success");
-        await mediaList();
-      } catch (error) {
-        button.disabled = false;
-        showError(error);
+      if (!track) return;
+
+      const performDelete = async () => {
+        button.disabled = true;
+        try {
+          await deleteTrack(track.id);
+          const path = track.media_path || track.audio_path;
+          if (path) await deleteMedia(path);
+          const remaining = await getOwnedTracks([track.project_id]);
+          if (!remaining.length) await deleteProject(track.project_id);
+          toast("Media deleted.", "success");
+          await mediaList();
+        } catch (error) {
+          button.disabled = false;
+          showError(error);
+        }
+      };
+
+      // Check if any fans have unlocked/paid for this content
+      let paidUnlockCount = 0;
+      if (track.is_paid) {
+        try {
+          const { count, error } = await supabase
+            .from("unlocks")
+            .select("id", { count: "exact", head: true })
+            .or(`track_id.eq.${track.id},project_id.eq.${track.project_id}`);
+          if (!error && typeof count === "number") {
+            paidUnlockCount = count;
+          }
+        } catch (_) {}
       }
+
+      if (paidUnlockCount > 0) {
+        const fanText = paidUnlockCount === 1 ? "1 fan has" : `${paidUnlockCount} fans have`;
+        const modal = openModal(`
+          <div class="modal-header">
+            <div>
+              <span class="eyebrow" style="color:var(--danger)">Warning</span>
+              <h2 style="margin:4px 0 0">Delete Exclusive Content?</h2>
+            </div>
+            <button class="modal-close" type="button" aria-label="Close">&times;</button>
+          </div>
+          <div class="form-stack" style="margin-top:16px">
+            <div class="dashboard-callout warning">
+              <i class="icon-alert-triangle"></i>
+              <div>
+                <strong>Fans have paid for "${escapeHtml(track.title)}"</strong>
+                <p style="margin:4px 0 0;font-size:0.86rem">
+                  ${fanText} already purchased or unlocked this exclusive release. Deleting it will permanently remove it from the database and <strong>everybody loses access</strong>, which may cause significant backlash from your supporters.
+                </p>
+              </div>
+            </div>
+            <p style="font-size:0.86rem;color:var(--muted);margin:0">
+              Are you completely sure you want to proceed? This action cannot be reversed.
+            </p>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+              <button class="btn btn-outline btn-small" type="button" id="cancel-exclusive-delete">Keep content</button>
+              <button class="btn btn-danger btn-small" type="button" id="confirm-exclusive-delete">Delete anyway</button>
+            </div>
+          </div>
+        `);
+
+        modal.backdrop.querySelector(".modal-close").addEventListener("click", modal.close);
+        modal.backdrop.querySelector("#cancel-exclusive-delete").addEventListener("click", modal.close);
+        modal.backdrop.querySelector("#confirm-exclusive-delete").addEventListener("click", async () => {
+          modal.close();
+          await performDelete();
+        });
+        return;
+      }
+
+      if (!window.confirm(`Delete "${track.title}"? This cannot be undone.`)) return;
+      await performDelete();
     });
   });
 }
